@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-13
 
     steps:
       - name: Checkout
@@ -16,11 +16,10 @@ jobs:
       - name: Show available Xcode versions
         run: ls /Applications/Xcode*.app | head -20
 
-      - name: Select latest Xcode
+      - name: Select Xcode 15
         run: |
-          LATEST=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
-          echo "Using: $LATEST"
-          sudo xcode-select -switch "$LATEST"
+          sudo xcode-select -switch /Applications/Xcode_15.2.app 2>/dev/null || \
+          sudo xcode-select -switch $(ls -d /Applications/Xcode*.app | sort -V | tail -1)
           xcodebuild -version
 
       - name: Show SDK & scheme
