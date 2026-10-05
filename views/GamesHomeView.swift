@@ -1,4 +1,4 @@
-﻿import SwiftUI
+import SwiftUI
 import UIKit
 
 // Chi ve vien top + 2 canh ben (khong co canh day)
@@ -96,14 +96,7 @@ struct GamesHomeView: View {
                         topTabBar
                         ScrollView(.vertical, showsIndicators: false) {
                             LazyVStack(spacing: 0, pinnedViews: []) {
-                                if ffTab == 0 {
-                                    deviceInfoCard
-                                        .padding(.horizontal, 16)
-                                        .padding(.top, 14)
-                                        .padding(.bottom, 10)
-                                        .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .top)))
-                                }
-                                FreefireESPHomeSection(store: ffESP, tab: ffTab)
+                                        FreefireESPHomeSection(store: ffESP, tab: ffTab)
                                     .transition(.opacity)
                                 Spacer(minLength: 40)
                             }
@@ -127,9 +120,6 @@ struct GamesHomeView: View {
                 if let game = selectedGame { GamePatchesView(game: game, store: store) }
             }
             .navigationDestination15(isPresented: $navigateToSettings) { SettingsView() }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                LicenseStatusBar().padding(.bottom, 6)
-            }
             .toast($licenseGate.activationToast)
             .sheet(item: $draftCoordinator.request) { request in
                 PatchProjectEditorView(
