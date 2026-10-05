@@ -24,7 +24,6 @@ struct FreefireESPHomeSection: View {
         VStack(spacing: 12) {
             if tab == 0 {
                 statusCard
-                patchButton
                 dnsButton
             } else if tab == 1 {
                 innoSectionHeader(title: "ESP PROTOCOL", subtitle: "Tường nhìn xuyên & hiển thị đối thủ")
