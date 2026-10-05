@@ -344,7 +344,7 @@ struct GamesHomeView: View {
                 Text(title)
                     .font(.system(size: 13, weight: .heavy))
                     .foregroundStyle(.white)
-                    .kerning(0.6)
+                    .kerning15(0.6)
                 Text(subtitle)
                     .font(.system(size: 11, weight: .regular))
                     .foregroundStyle(Color(white: 0.38))
