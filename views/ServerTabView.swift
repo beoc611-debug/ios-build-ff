@@ -113,42 +113,49 @@ struct ServerTabView: View {
 
     private func sectionCard(_ section: UIConfigSection) -> some View {
         let visible = visibleItems(in: section)
-        return VStack(spacing: 0) {
-            // Innova section header
-            HStack(alignment: .center, spacing: 10) {
-                HStack(spacing: 7) {
-                    Image(systemName: section.icon)
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(AppTheme.neonRed)
+        let accent = section.accentColor
+        return HStack(spacing: 0) {
+            // Left accent bar
+            Rectangle()
+                .fill(accent)
+                .frame(width: 3)
+
+            VStack(spacing: 0) {
+                // Section header
+                HStack(alignment: .center, spacing: 8) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(accent.opacity(0.18))
+                            .frame(width: 30, height: 30)
+                        Image(systemName: section.icon)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(accent)
+                    }
                     Text(section.title.uppercased())
                         .font(.system(size: 12, weight: .heavy))
                         .foregroundStyle(.white)
                         .kerning15(0.5)
+                    Spacer()
                 }
-                Spacer()
-                Rectangle()
-                    .fill(AppTheme.neonRed)
-                    .frame(width: 3, height: 28)
-                    .clipShape(Capsule())
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 14)
-            .padding(.bottom, 10)
+                .padding(.horizontal, 14)
+                .padding(.top, 13)
+                .padding(.bottom, 10)
 
-            ForEach(Array(visible.enumerated()), id: \.element.id) { idx, item in
-                itemRow(item, accent: item.accentColor)
-                    .transition(.opacity)
-                if idx < visible.count - 1 {
-                    rowDivider
+                ForEach(Array(visible.enumerated()), id: \.element.id) { idx, item in
+                    itemRow(item, accent: item.accentColor)
+                        .transition(.opacity)
+                    if idx < visible.count - 1 {
+                        rowDivider
+                    }
                 }
-            }
 
-            Spacer(minLength: 8)
+                Spacer(minLength: 8)
+            }
         }
         .background(AppTheme.techCardFill)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .strokeBorder(Color.white.opacity(0.07), lineWidth: 1))
+            .strokeBorder(accent.opacity(0.18), lineWidth: 1))
     }
 
     // MARK: - Row divider
@@ -362,12 +369,16 @@ struct ServerTabView: View {
         let color = item.accentColor
         return HStack(spacing: 14) {
             ZStack {
-                Circle()
-                    .fill(isOn ? color.opacity(0.20) : Color.white.opacity(0.07))
-                    .frame(width: 42, height: 42)
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .fill(isOn ? color.opacity(0.22) : Color.white.opacity(0.06))
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 11, style: .continuous)
+                            .strokeBorder(isOn ? color.opacity(0.38) : Color.white.opacity(0.08), lineWidth: 1)
+                    )
                 Image(systemName: item.icon)
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(isOn ? color : Color(white: 0.35))
+                    .foregroundStyle(isOn ? color : Color(white: 0.32))
                     .scaleEffect(isOn ? 1.06 : 1.0)
             }
             .animation(.spring(response: 0.28, dampingFraction: 0.72), value: isOn)
