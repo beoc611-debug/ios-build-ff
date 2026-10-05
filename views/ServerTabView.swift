@@ -113,31 +113,42 @@ struct ServerTabView: View {
 
     private func sectionCard(_ section: UIConfigSection) -> some View {
         let visible = visibleItems(in: section)
-        let accent = section.accentColor
         return VStack(spacing: 0) {
-            HStack(spacing: 8) {
-                Image(systemName: section.icon)
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(accent)
-                Text(section.title.uppercased())
-                    .font(.system(size: 11, weight: .heavy))
-                    .foregroundStyle(accent.opacity(0.85))
-                    .kerning15(1.0)
+            // Innova section header
+            HStack(alignment: .center, spacing: 10) {
+                HStack(spacing: 7) {
+                    Image(systemName: section.icon)
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(AppTheme.neonRed)
+                    Text(section.title.uppercased())
+                        .font(.system(size: 12, weight: .heavy))
+                        .foregroundStyle(.white)
+                        .kerning15(0.5)
+                }
                 Spacer()
+                Rectangle()
+                    .fill(AppTheme.neonRed)
+                    .frame(width: 3, height: 28)
+                    .clipShape(Capsule())
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
             .padding(.bottom, 10)
 
             ForEach(Array(visible.enumerated()), id: \.element.id) { idx, item in
-                itemRow(item, accent: accent)
+                itemRow(item, accent: item.accentColor)
                     .transition(.opacity)
                 if idx < visible.count - 1 {
                     rowDivider
                 }
             }
+
+            Spacer(minLength: 8)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .techCard()
+        .background(AppTheme.techCardFill)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .strokeBorder(Color.white.opacity(0.07), lineWidth: 1))
     }
 
     // MARK: - Row divider
@@ -351,64 +362,38 @@ struct ServerTabView: View {
         let color = item.accentColor
         return HStack(spacing: 14) {
             ZStack {
-                RoundedRectangle(cornerRadius: 9)
-                    .fill(isOn ? color.opacity(0.22) : Color.white.opacity(0.07))
-                    .frame(width: 38, height: 38)
+                Circle()
+                    .fill(isOn ? color.opacity(0.20) : Color.white.opacity(0.07))
+                    .frame(width: 42, height: 42)
                 Image(systemName: item.icon)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(isOn ? color : Color(red: 0.40, green: 0.48, blue: 0.65))
-                    .scaleEffect(isOn ? 1.08 : 1.0)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(isOn ? color : Color(white: 0.35))
+                    .scaleEffect(isOn ? 1.06 : 1.0)
             }
             .animation(.spring(response: 0.28, dampingFraction: 0.72), value: isOn)
+
             Text(item.label)
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(isOn ? .white : Color(red: 0.52, green: 0.60, blue: 0.78))
+                .foregroundStyle(isOn ? .white : Color(white: 0.55))
                 .animation(.easeInOut(duration: 0.15), value: isOn)
+
             Spacer()
-            HStack(spacing: 0) {
-                Button {
-                    if isOn {
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        withAnimation(.spring(response: 0.28, dampingFraction: 0.72)) {
-                            store.toggleById(item.id)
-                        }
+
+            Toggle("", isOn: Binding(
+                get: { store.boolValue(for: item.id) },
+                set: { _ in
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    withAnimation(.spring(response: 0.28, dampingFraction: 0.72)) {
+                        store.toggleById(item.id)
                     }
-                } label: {
-                    Text("Tắt")
-                        .font(.system(size: 12, weight: !isOn ? .bold : .medium))
-                        .foregroundStyle(!isOn ? .white : Color(red: 0.45, green: 0.55, blue: 0.75))
-                        .frame(width: 40, height: 28)
-                        .background(!isOn
-                            ? AnyView(Capsule().fill(Color(red: 0.30, green: 0.32, blue: 0.45)))
-                            : AnyView(Color.clear))
-                        .animation(.spring(response: 0.28, dampingFraction: 0.72), value: isOn)
                 }
-                .buttonStyle(.plain)
-                Button {
-                    if !isOn {
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                        withAnimation(.spring(response: 0.28, dampingFraction: 0.72)) {
-                            store.toggleById(item.id)
-                        }
-                    }
-                } label: {
-                    Text("Bật")
-                        .font(.system(size: 12, weight: isOn ? .bold : .medium))
-                        .foregroundStyle(isOn ? .white : Color(red: 0.45, green: 0.55, blue: 0.75))
-                        .frame(width: 40, height: 28)
-                        .background(isOn
-                            ? AnyView(Capsule().fill(color.opacity(0.85)))
-                            : AnyView(Color.clear))
-                        .animation(.spring(response: 0.28, dampingFraction: 0.72), value: isOn)
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(2)
-            .background(Color.white.opacity(0.08))
-            .clipShape(Capsule())
-            .overlay(Capsule().strokeBorder(Color.white.opacity(0.10), lineWidth: 0.5))
+            ))
+            .labelsHidden()
+            .tint(color)
+            .scaleEffect(0.85)
         }
-        .padding(.vertical, 11)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 13)
     }
 
     private func sliderRow(_ item: UIConfigItem, accent: Color) -> some View {
