@@ -1,4 +1,4 @@
-﻿import SwiftUI
+import SwiftUI
 import WebKit
 
 
@@ -885,7 +885,7 @@ struct GamePatchesView: View {
         let useSetRuleState = applicable.allSatisfy(\.canToggle)
 
         togglingProjectID = item.id
-        Task.detached(priority: .userInitiated) {
+        Task(priority: .userInitiated) {
             if isOn {
                 guard await PatchHubService.verifyAccess(licenseKey: licenseGate.storedKeyCode) else {
                     await MainActor.run {
