@@ -98,10 +98,11 @@ struct GamesHomeView: View {
                             LazyVStack(spacing: 0, pinnedViews: []) {
                                         FreefireESPHomeSection(store: ffESP, tab: ffTab)
                                     .transition(.opacity)
-                                Spacer(minLength: 40)
+                                Spacer(minLength: 20)
                             }
                             .animation(.spring(response: 0.34, dampingFraction: 0.82), value: ffTab)
                         }
+                        .safeAreaInset(edge: .bottom) { floatingInjectBar }
                     }
                 }
             }
@@ -220,8 +221,8 @@ struct GamesHomeView: View {
 
     private var topTabBar: some View {
         HStack(spacing: 4) {
-            innovaTabItem(icon: "scope", label: "AIM", index: 0)
-            innovaTabItem(icon: "eye.fill", label: "ESP", index: 1)
+            innovaTabItem(icon: "house.fill", label: "MAIN", index: 0)
+            innovaTabItem(icon: "scope", label: "ESP/AIM", index: 1)
             innovaTabItem(icon: "slider.horizontal.3", label: "MISC", index: 2)
         }
         .padding(4)
@@ -250,6 +251,80 @@ struct GamesHomeView: View {
             .animation(.easeInOut(duration: 0.15), value: active)
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Floating inject bar
+
+    private var floatingInjectBar: some View {
+        let patchInstalled = ffESP.selectedVariant == .freefire ? ffESP.isPatchInstalled : ffESP.isPatchInstalledMAX
+        let variantLabel = ffESP.selectedVariant == .freefire ? "FREE FIRE THƯỜNG" : "FREE FIRE MAX"
+        let detected = ffESP.selectedVariant == .freefire ? ffESP.detectedBundleID : ffESP.detectedMAXBundleID
+        let accentColor: Color = patchInstalled ? AppTheme.neonRed : AppTheme.injectGreen
+
+        return HStack(spacing: 10) {
+            Button {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                if patchInstalled { ffESP.removePatches() } else { ffESP.patchGame() }
+            } label: {
+                HStack(spacing: 10) {
+                    ZStack {
+                        Circle().fill(Color.white.opacity(0.18)).frame(width: 34, height: 34)
+                        if ffESP.isPatching {
+                            ProgressView().scaleEffect(0.75).tint(.white)
+                        } else {
+                            Image(systemName: patchInstalled ? "arrow.uturn.backward.circle.fill" : "bolt.fill")
+                                .font(.system(size: 15, weight: .bold)).foregroundStyle(.white)
+                        }
+                    }
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(ffESP.isPatching ? "ĐANG XỬ LÝ..." : (patchInstalled ? "UN-PATCH" : "INJECT (\(variantLabel))"))
+                            .font(.system(size: 12, weight: .heavy)).foregroundStyle(.white).kerning15(0.3)
+                        Text(ffESP.isPatching ? "Vui lòng chờ..." : (patchInstalled ? "Gỡ bỏ patch đã cài" : "Bắt đầu kích hoạt chức năng"))
+                            .font(.system(size: 10)).foregroundStyle(.white.opacity(0.65))
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16).padding(.vertical, 12)
+                .background(
+                    patchInstalled
+                        ? LinearGradient(colors: [Color(red: 0.55, green: 0.10, blue: 0.10), Color(red: 0.38, green: 0.07, blue: 0.07)], startPoint: .leading, endPoint: .trailing)
+                        : LinearGradient(colors: [AppTheme.injectGreen, Color(red: 0.04, green: 0.55, blue: 0.28)], startPoint: .leading, endPoint: .trailing)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(accentColor.opacity(0.45), lineWidth: 1.2))
+                .shadow(color: accentColor.opacity(0.35), radius: 12, y: 3)
+            }
+            .buttonStyle(PressScaleButtonStyle())
+            .disabled(ffESP.isPatching || detected == nil)
+            .opacity(detected == nil && !ffESP.isPatching ? 0.45 : 1.0)
+
+            Button {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                if !ffESP.isPatching {
+                    if patchInstalled { ffESP.removePatches() } else { ffESP.patchGame() }
+                }
+            } label: {
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 50, height: 50)
+                    .background(
+                        patchInstalled
+                            ? LinearGradient(colors: [Color(red: 0.55, green: 0.10, blue: 0.10), Color(red: 0.38, green: 0.07, blue: 0.07)], startPoint: .top, endPoint: .bottom)
+                            : LinearGradient(colors: [AppTheme.injectGreen, Color(red: 0.04, green: 0.55, blue: 0.28)], startPoint: .top, endPoint: .bottom)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .shadow(color: accentColor.opacity(0.35), radius: 10, y: 3)
+            }
+            .buttonStyle(PressScaleButtonStyle())
+            .disabled(ffESP.isPatching)
+        }
+        .padding(.horizontal, 16).padding(.top, 10).padding(.bottom, 12)
+        .background(Color(red: 0.04, green: 0.04, blue: 0.06).opacity(0.97))
+        .background(.ultraThinMaterial)
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color.white.opacity(0.08)).frame(height: 0.5)
+        }
     }
 
     // MARK: - Device info card
