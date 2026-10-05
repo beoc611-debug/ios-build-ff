@@ -196,7 +196,7 @@ struct FreefireESPHomeSection: View {
     private func innoSectionHeader(title: String, subtitle: String) -> some View {
         HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 3) {
-                Text(title).font(.system(size: 12, weight: .heavy)).foregroundStyle(.white).kerning(0.5)
+                Text(title).font(.system(size: 12, weight: .heavy)).foregroundStyle(.white).kerning15(0.5)
                 Text(subtitle).font(.system(size: 11)).foregroundStyle(Color(white: 0.35))
             }
             Spacer()
@@ -273,7 +273,7 @@ struct FreefireESPHomeSection: View {
                         }
                         VStack(alignment: .leading, spacing: 2) {
                             Text("UN-PATCH")
-                                .font(.system(size: 14, weight: .heavy)).foregroundStyle(.white).kerning(0.5)
+                                .font(.system(size: 14, weight: .heavy)).foregroundStyle(.white).kerning15(0.5)
                             Text("Gỡ bỏ patch đã cài")
                                 .font(.system(size: 11)).foregroundStyle(.white.opacity(0.65))
                         }
@@ -306,7 +306,7 @@ struct FreefireESPHomeSection: View {
                         }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(store.isPatching ? "ĐANG INJECT..." : "INJECT (\(variantLabel))")
-                                .font(.system(size: 13, weight: .heavy)).foregroundStyle(.white).kerning(0.4)
+                                .font(.system(size: 13, weight: .heavy)).foregroundStyle(.white).kerning15(0.4)
                             Text(store.isPatching ? "Vui lòng chờ..." : "Bắt đầu kích hoạt chức năng")
                                 .font(.system(size: 11)).foregroundStyle(.white.opacity(0.70))
                         }
@@ -369,7 +369,7 @@ struct FreefireESPHomeSection: View {
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text("DOWNLOAD DNS")
-                        .font(.system(size: 13, weight: .heavy)).foregroundStyle(.white).kerning(0.4)
+                        .font(.system(size: 13, weight: .heavy)).foregroundStyle(.white).kerning15(0.4)
                     Text("Cấu hình DNS bảo vệ kết nối")
                         .font(.system(size: 11)).foregroundStyle(Color(white: 0.45))
                 }
